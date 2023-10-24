@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login Controller Tests</title>
+    <style>
+        textarea{
+            height: 75px;
+            width: 400px;
+        }
+    </style>
+	<!-- Import Axios -->
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script type="text/javascript">
+	
+	window.addEventListener("load", () => {
+
+        const apiUrl = "http://localhost/api/";
+        //alert("Requests will be sent to:\n" + apiUrl );
+		
+        // Create an instance of axios and set the base URL
+		const ax = axios.create({
+		  baseURL: apiUrl
+		});
+
+		let sessionId;
+		
+		document.getElementById("btnLogin").addEventListener("click", () => {
+			
+			const input = document.querySelector("#txtJson").value;
+            let loginObj = null;
+            try{
+                loginObj = JSON.parse(input);
+            }catch(e){
+                console.log("UNABLE TO PARSE THE JSON IN THE TEXTBOX", e);
+                return;
+            }
+
+            ax.post("login/", loginObj)
+            .then(response => {
+                
+                //console.log(response);
+                console.log(response.data);
+                
+                // Check to make sure the x-id header was set on the server
+                // and then make sure we pass that header in all subsequent requests
+                sessionId = response.headers['x-id'];
+                if(sessionId){
+                    console.log("SESSION ID: " + sessionId);
+                    document.getElementById("session-id").innerHTML = "Session ID: " + sessionId;
+
+                    // send the x-id header with every future request:
+                    ax.interceptors.request.use(
+                        function(request) {
+                            request.headers['x-id'] = sessionId;
+                            return request;
+                        }
+                    )
+
+                }
+
+            })
+            .catch(error => console.log(error));
+
+		});
+
+		document.getElementById("btnLogout").addEventListener("click", () => {
+			ax.get("logout/")
+				.then(response => {
+					console.log(response);
+                    document.getElementById("session-id").innerHTML = "SESSION DESTROYED"
+				})
+				.catch(error => console.log(error));
+		});
+
+	});
+	</script>
+</head>
+<body>
+	<h2>Login Test</h2>
+    <p>Enter the JSON string that will be sent in the body of the POST request:</p>
+	<textarea id="txtJson">
+{
+  "email":"jane@doe.com",
+  "password":"test"
+}
+    </textarea>
+    <br>
+    <input type="button" id="btnLogin" value="Login (POST)">
+	<div id="session-id"></div>
+	<p>Make sure the user is 'active' (they can't log in unless they are 'active').</p>
+	<input type="button" value="Log Out" id="btnLogout">
+</body>
+</html>

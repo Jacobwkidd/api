@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>User Controller Tests</title>
+<style type="text/css">
+	textarea{
+		height: 150px;
+		width: 400px;
+	}
+</style>
+<!-- Import Axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script type="text/javascript">
+	
+window.addEventListener("load", () => {
+
+    const apiUrl = "http://localhost/api/";
+    //alert("Requests will be sent to:\n" + apiUrl );
+
+	// Create an instance of axios and set the base URL
+	const ax = axios.create({
+	  baseURL: apiUrl
+	});
+	
+	document.getElementById("btnGetAllUsers").addEventListener("click", () => {
+		ax.get("users/")
+			.then(response => console.log(response))
+			.catch(error => console.log(error));
+	});
+
+	document.getElementById("btnGetUserById").addEventListener("click", () => {
+		const userId = prompt("Enter the ID of the user you want to GET:");
+		ax.get("users/" + userId)
+			.then(response => console.log(response))
+			.catch(error => console.log(error));
+	});
+	
+	document.getElementById("btnPostUser").addEventListener("click", () => {
+		
+		const input = document.querySelector("#txtJson").value;
+
+		try{
+			const newUser = JSON.parse(input);
+
+			ax.post("users/", newUser)
+			.then(response => console.log(response))
+			.catch(error => console.log(error));
+			
+		}catch(e){
+			console.log("UNABLE TO PARSE THE JSON IN THE TEXTBOX", e);
+		}
+		
+		
+	});
+	
+	document.getElementById("btnPutUser").addEventListener("click", () => {
+		const input = document.querySelector("#txtJson").value;
+
+		try{
+			const userToUpdate = JSON.parse(input);
+			if(userToUpdate.id > 0){
+				ax.put("users/" + userToUpdate.id, userToUpdate)
+					.then(response => console.log(response))
+					.catch(error => console.log(error));
+			}else{
+				alert("The JSON in the textbox must include an 'id' property");
+			}
+		}catch(e){
+			console.log("UNABLE TO PARSE THE JSON IN THE TEXTBOX", e);
+		}
+	});
+	
+	document.getElementById("btnDeleteUser").addEventListener("click", () => {
+		const userID = prompt("Enter ID of user to delete");
+		ax.delete("users/" + userID)
+			.then(response => console.log(response))
+			.catch(error => console.log(error));
+	});
+	
+});
+</script>
+</head>
+<body>
+	<p>
+		Open your web developer tools and keep an eye on both the <b>console log</b> and the <b>Network</b> tab.
+	</p>
+	<h3>Requests handled by handleUsers() action method (route: localhost/api/users/)</h3>
+	<button id="btnGetAllUsers">Get All Users</button>
+	<button id="btnPostUser">Post User</button>
+	
+    <h3>Requests handled by handleSingleUser() action method (route: localhost/api/users/:id)</h3>
+    <button id="btnGetUserById">Get User By ID</button>
+	<button id="btnPutUser">Put User</button>
+	<button id="btnDeleteUser">Delete User</button>
+
+	<br><br>
+	Request Body (for POST and PUT requests):
+	<br>
+	<textarea id="txtJson">
+{
+  "firstName":"Fred", 
+  "lastName": "Jones", 
+  "email": "fj@fj.com", 
+  "password":"test", 
+  "roleId":1, 
+  "active": true
+}
+	</textarea>
+	<p>
+		Make sure to test the password changes.
+		If you send an empty string for the password, then it should be changed
+		in the database. If you send a new password (not an empty string),
+		then you should see a new salt and new password in the database.
+	</p>
+</body>
+</html>

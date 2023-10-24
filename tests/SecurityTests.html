@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Securing Server Resource Tests</title>
+    <style type="text/css">
+        textarea{
+            height: 150px;
+            width: 400px;
+        }
+    </style>
+	<!-- Import Axios -->
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script type="text/javascript">
+	
+	window.addEventListener("load", () => {
+
+		// Create an instance of axios and set the base URL
+		const ax = axios.create({
+		  baseURL: 'http://localhost/api/'
+		});
+
+		// We'll show the info for the logged in user in this div
+		const loginStatus = document.getElementById("login-status");
+		
+		// When a user logs in, we want to keep the session id
+		// so that we can send it to the server with every request (in the x-id header)
+		let sessionId;
+		
+		document.getElementById("frmLogin").addEventListener("submit", (evt) => {
+
+			evt.preventDefault();
+            loginStatus.innerHTML = "";
+
+            const email = document.getElementById("txtLoginEmail").value;
+			const password = document.getElementById("txtLoginPassword").value;
+
+			ax.post("login/", {email, password})
+				.then(response => {
+					
+					// get the session id from the x-id header
+					sessionId = response.headers['x-id'];
+
+					const userEmail = response.data.email;
+					const roleId = response.data.roleId;
+					loginStatus.innerHTML = `Logged in as ${userEmail}<br>Role: ${roleId}<br>Session ID: ${sessionId}`;
+
+					// here's how we can configure axios to send the x-id header in every request
+					ax.interceptors.request.use(
+					    function(request) {
+					        request.headers['x-id'] = sessionId;
+					        return request;
+					    }
+					)					
+
+				})
+				.catch(error => console.log(error));
+
+		});
+
+		document.getElementById("btnLogout").addEventListener("click", () => {
+			ax.get("logout/")
+				.then(response => {
+					loginStatus.innerHTML = "Not Logged In"
+				})
+				.catch(error => console.log(error));
+		});
+
+		document.getElementById("btnGetAllUsers").addEventListener("click", () => {
+            ax.get("users/")
+                .then(response => console.log(response))
+                .catch(error => console.log(error));
+        });
+
+        document.getElementById("btnGetUserById").addEventListener("click", () => {
+            const userId = prompt("Enter the ID of the user you want to GET:");
+            ax.get("users/" + userId)
+                .then(response => console.log(response))
+                .catch(error => console.log(error));
+        });
+        
+        document.getElementById("btnPostUser").addEventListener("click", () => {
+            
+            const input = document.querySelector("#txtJson").value;
+
+            try{
+                const newUser = JSON.parse(input);
+
+                ax.post("users/", newUser)
+                .then(response => console.log(response))
+                .catch(error => console.log(error));
+                
+            }catch(e){
+                console.log("UNABLE TO PARSE THE JSON IN THE TEXTBOX", e);
+            }
+            
+            
+        });
+        
+        document.getElementById("btnPutUser").addEventListener("click", () => {
+            const input = document.querySelector("#txtJson").value;
+
+            try{
+                const userToUpdate = JSON.parse(input);
+                if(userToUpdate.id > 0){
+                    ax.put("users/" + userToUpdate.id, userToUpdate)
+                        .then(response => console.log(response))
+                        .catch(error => console.log(error));
+                }else{
+                    alert("The JSON in the textbox must include an 'id' property");
+                }
+            }catch(e){
+                console.log("UNABLE TO PARSE THE JSON IN THE TEXTBOX", e);
+            }
+        });
+        
+        document.getElementById("btnDeleteUser").addEventListener("click", () => {
+            const userID = prompt("Enter ID of user to delete");
+            ax.delete("users/" + userID)
+                .then(response => console.log(response))
+                .catch(error => console.log(error));
+        });
+
+	});
+	</script>
+</head>
+<body>
+    <h3>Make sure that you set <b>SECURE_SERVER_RESOURCES</b> to TRUE in the config file!</h3>
+	<b>Login</b>
+	<form id="frmLogin" method="POST">
+		<label>Email</label>
+		<br>
+		<input type="text" id="txtLoginEmail" name="email">
+		<br>
+		<label>Password</label>
+		<br>
+		<input type="text" id="txtLoginPassword" name="password">
+		<br>
+		<input type="submit" value="Log In">
+	</form>
+	<div id="login-status">You are not logged in</div>
+	<input type="button" value="Log Out" id="btnLogout">
+	<br>
+	<br>
+	<br>
+	
+    <p>
+		Open your web developer tools and keep an eye on both the <b>console log</b> and the <b>Network</b> tab.
+	</p>
+	<h3>Requests handled by handleUsers() action method (route: localhost/api/users/)</h3>
+	<button id="btnGetAllUsers">Get All Users</button>
+	<button id="btnPostUser">Post User</button>
+	
+    <h3>Requests handled by handleSingleUser() action method (route: localhost/api/users/:id)</h3>
+    <button id="btnGetUserById">Get User By ID</button>
+	<button id="btnPutUser">Put User</button>
+	<button id="btnDeleteUser">Delete User</button>
+
+	<br><br>
+	Request Body (for POST and PUT requests):
+	<br>
+	<textarea id="txtJson">
+{
+  "firstName":"Lu", 
+  "lastName": "Yun", 
+  "email": "ly@ly.com", 
+  "password":"test", 
+  "roleId":1, 
+  "active": true
+}
+	</textarea>
+</body>
+</html>
