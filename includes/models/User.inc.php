@@ -21,7 +21,14 @@ class User extends Model{
 	 * 										The default will be an empty array: []									
 	 */
 	public function __construct($args = []){
-		
+		$this->id = $args["id"] ?? 0;
+		$this->firstName = $args["firstName"] ?? "";
+		$this->lastName = $args["lastName"] ?? "";
+		$this->email = $args["email"] ?? "";
+		$this->roleId = $args["roleId"] ?? 0;
+		$this->password = $args["password"] ?? "";
+		$this->salt = $args["salt"] ?? "";
+		$this->active = $args["active"] ?? "";
 	}
 
 	/**
@@ -41,7 +48,11 @@ class User extends Model{
 		// It must be a number equal to or greater than 0 
 		// (0 is valid becuase it will indicate that we are inserting a new user)
 		// If the ID is not valid then you should add an 'id' key to $this->validationErrors with a value of "ID is not valid"
-		
+		//valid the id 
+        if(!is_numeric($this->id) || $this->id < 0){
+            $valid = false;
+            $this->validationErrors["id"] = "ID is not valid";
+        }
 
 
 		// validate firstName
@@ -49,7 +60,10 @@ class User extends Model{
 		// firstName must not be longer than 30 characters
 		// If the firstName is empty, you should add a 'firstName' key to $this->validationErrors with a value of "First Name is required"
 		// If the firstName is longer than 30 characters, you should add a 'firstName' key to $this->validationErrors with a value of "First Name must be 30 characters or less"
-		
+		if(empty($this->firstName) || $this->firstName > 30){
+			$valid = false;
+			$this->validationError["firstName"] = "first name is not valid";
+		}
 
 
 		// validate lastName
@@ -57,7 +71,10 @@ class User extends Model{
 		// lastName must not be longer than 30 characters
 		// If the lastName is empty, you should add a 'lastName' key to $this->validationErrors with a value of "Last Name is required"
 		// If the lastName is longer than 30 characters, you should add a 'lastName' key to $this->validationErrors with a value of "Last Name must be 30 characters or less"
-		
+		if(empty($this->lastName) || $this->lastName > 30){
+			$valid = false;
+			$this->validationError["firstName"] = "last name is not valid";
+		}
 
 
 		// validate email
