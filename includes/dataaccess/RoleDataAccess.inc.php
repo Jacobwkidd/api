@@ -21,7 +21,7 @@ class RoleDataAccess extends DataAccess{
     * @param {mysqli} $link      A preconfigured connection to the database
     */
     function __construct($link){
-		parent::__construct($link); // call the super constructor
+		  parent::__construct($link); // call the super constructor
     }
 
     /**
@@ -33,7 +33,14 @@ class RoleDataAccess extends DataAccess{
     * @return {array}
     */
     function convertModelToRow($role){
-    	return []; // replace this with the real code
+      $row = [];
+
+      $row["user_role_id"] = $role->id;
+      $row["user_role_name"] = $role->name;
+      $row["user_role_desc"] = $role->description;
+
+      return $row;
+
     }
 
     /**
@@ -45,8 +52,12 @@ class RoleDataAccess extends DataAccess{
     */
     function convertRowToModel($row){
 
-    	return new Role(); // replace this with the real code
-    	
+      $role = new Role();
+      $role->id = $row['user_role_id'];
+      $role->name = $row['user_role_name'];
+      $role->description = $row['user_role_desc'];
+  
+      return $role;
     }
 
 
@@ -58,7 +69,22 @@ class RoleDataAccess extends DataAccess{
     * @return {array}		Returns an array of model objects
     */
     function getAll($args = []){
-		return []; // replace this with the real code
+
+      $qStr = "SELECT
+                  user_role_id,
+                  user_role_name,
+                  user_role_desc
+              FROM user_roles";
+  
+      $result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
+  
+      $allRoles = [];
+  
+      while($row = mysqli_fetch_assoc($result)){
+          $allRoles[] = $this->convertRowToModel($row);
+      }
+  
+      return $allRoles;
     }
 
     /**
@@ -67,7 +93,25 @@ class RoleDataAccess extends DataAccess{
     * @return {Role}		Returns an instance of a model object 
     */
     function getById($id){
-		return new Role(); // replace this with the real code
+
+      $qStr = "SELECT
+                  user_role_id,
+                  user_role_name,
+                  user_role_desc
+              FROM user_roles
+              WHERE user_role_id =" . mysqli_real_escape_string($this->link, $id);
+  
+      $result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
+  
+      if($result->num_rows == 1){
+          $row = mysqli_fetch_assoc($result);
+          //var_dump($row);die();
+          $role = $this->convertRowToModel($row);
+          return $role;
+      }
+  
+      return false;
+  
     }
 
     /**
@@ -77,7 +121,27 @@ class RoleDataAccess extends DataAccess{
     *						(the id is assigned by the database)
     */
     function insert($role){
-		return new Role(); // replace this with the real code		
+
+      $row = $this->convertModelToRow($role);
+  
+      $qStr = "INSERT INTO user_roles (
+                  user_role_name,
+                  user_role_desc
+              ) VALUES (
+                  '{$row['user_role_name']}',
+                  '{$row['user_role_desc']}'
+              )";
+      //die($qStr);
+      $result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
+  
+      if($result){
+          $role->id = mysqli_insert_id($this->link);
+          return $role;
+      }else{
+          $this->handleError("unable to insert role");
+      }
+  
+      return false;
     }
 
     /**
@@ -86,7 +150,23 @@ class RoleDataAccess extends DataAccess{
     * @return {boolean}		Returns true if the updated succeeded, false otherwise
     */
     function update($role){
-		return null; // replace this with the real code
+
+      $row = $this->convertModelToRow($role);
+  
+      $qStr = "UPDATE user_roles SET
+                  user_role_name = '{$row['user_role_name']}',
+                  user_role_desc='{$row['user_role_desc']}'
+                  WHERE user_role_id = " . $row['user_role_id'];
+      //die($qStr);
+  
+      $result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
+      //var_dump($result); die();
+      if($result){
+          return true;
+      }else{
+          $this->handleError("Unable to update user");
+      }
+      return false;
     }
 
 
@@ -98,6 +178,6 @@ class RoleDataAccess extends DataAccess{
     function delete($id){
     	// should we really delete a row?
     	// it can get super tricky when there are foreign keys!
-		return null; // replace this with the real code
+		  return null; // replace this with the real code
     }
 }

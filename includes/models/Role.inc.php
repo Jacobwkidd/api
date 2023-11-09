@@ -1,7 +1,7 @@
 <?php 
 
 // Add your code here
-include("Model.inc.php");
+include_once("Model.inc.php");
 
 class Role extends Model{
 

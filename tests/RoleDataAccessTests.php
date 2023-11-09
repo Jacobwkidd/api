@@ -4,6 +4,43 @@ include_once(__DIR__ . "/../includes/models/Role.inc.php");
 include_once("create-test-database.php");
 
 
+$row["user_role_id"] = 1;
+$row["user_role_name"] = "Test Role";
+$row["user_role_desc"] = "sdfa";
+
+//TEST convertRowToModel
+$da = new RoleDataAccess($link);
+$r = $da->convertRowToModel($row);
+// var_dump($r);
+
+// TEST convertModelToRow
+
+$role = new Role();
+$role->id = 6;
+$role->name = "Some Role";
+$role->description = "Some Description of the role";
+$row = $da->ConvertModelToRow($role);
+// var_dump($row);
+
+//TEST getAll();
+$roleModels = $da->getAll();
+// var_dump($roleModels);
+
+
+//TEST getById();
+$role = $da->getById(1);
+// var_dump($role);
+
+//TEST insert();
+$role = new Role(["id" => 0, "name" => "some new Role"]);
+$newRole = $da->insert($role);
+// var_dump($newRole);
+
+//TEST update();
+$role->name = "some updated name";
+var_dump($da->update($role));
+
+die();
 $testResults = array();
 
 // You'll have to run all these tests for each of your data access classes
@@ -57,6 +94,7 @@ function testConvertModelToRow(){
 	);
 
 	$r = new Role($options);
+	// var_dump($r);
 
 	$expectedResult = array(
 		'user_role_id' => 1,
@@ -65,6 +103,7 @@ function testConvertModelToRow(){
 	);
 	
 	$actualResult = $da->convertModelToRow($r);
+	// var_dump($actualResult);
 
 	/*
 	// This helped me to discover that I needed to convert the id to an int (with intval())

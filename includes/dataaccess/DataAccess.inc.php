@@ -87,7 +87,7 @@ abstract class DataAccess{
 	* @param {array}
 	* @return {Model}	Returns a subclass of a Model 
 	*/
-	abstract function convertRowToModel($row);
+	abstract function convertRowToModel($row); // you have describe in your the subclass
 
 
 	/**
