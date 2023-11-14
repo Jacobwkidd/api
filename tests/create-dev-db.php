@@ -48,7 +48,7 @@ $sql = "
 		('John', 'Doe','john@doe.com', 'opensesame', 'xxx', '1', true),
 		('Jane', 'Anderson','jane@doe.com', 'letmein', 'xxx', '2', true),
 		('Bob', 'Smith','bob@smith.com', 'test', 'xxx', '2', false);
-
+	
 ";
 
 mysqli_multi_query($link, $sql) or die(mysqli_error($link));

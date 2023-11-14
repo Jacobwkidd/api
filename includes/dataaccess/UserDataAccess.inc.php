@@ -44,7 +44,19 @@ class UserDataAccess extends DataAccess{
 	* @return {array}
 	*/
 	function convertModelToRow($user){
-		return []; // comment this out when you implement the code for this method		
+		$row = [];
+
+		$row["user_role_id"] = $user->id;
+		$row["user_first_name"] = $user->firstName;
+		$row["user_last_name"] = $user->lastName;
+		$row["user_email"] = $user->email;
+		$row["user_role"] = $user->roleId;
+		$row["user_password"] = $user->password;
+		$row["user_salt"] = $user->salt;
+		$row["user_active"] = $user->active;
+
+		return $row;
+	
 	}
 
 	/**
@@ -58,7 +70,29 @@ class UserDataAccess extends DataAccess{
 		// Note that if you have a column that allows some HMTL content
 		// then use $this->sanitizeHTML() instead of htmlentities()
 
-		return new User(); // comment this out when you implement the code for this method
+		/*
+		id				user_id
+		firstName		user_first_name
+		lastName		user_last_name
+		email			user_email
+		roleId			user_role
+		password		user_password
+		salt			user_salt
+		active			user_active 
+		*/
+		$role = new Role();
+		$role->id = $row['user_id'];
+		$role->firstName = $row['user_first_name'];
+		$role->lastName = $row['user_last_name'];
+		$role->email = $row['user_email'];
+		$role->roleId = $row['user_role'];
+		$role->password = $row['user_password'];
+		$role->salt = $row['user_salt'];
+		$role->active = $row['user_active'];
+  
+      	return $role;
+
+		// return new User(); // comment this out when you implement the code for this method
 	}
 
 	/**

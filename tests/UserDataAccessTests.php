@@ -4,8 +4,35 @@ include_once(__DIR__ . "/../includes/models/User.inc.php");
 include_once("create-test-database.php");
 
 
+
+
+
 $testResults = array();
 
+$options = array(
+	'id' => 1,
+	'firstName' => "Bob",
+	'lastName' => "Smith",
+	'email' => "bob@smith.com",
+	'roleId' => 1,
+	'password' => "opensesame",
+	'active' => true,
+	'salt' => "xxx"
+);
+
+//TEST convertRowToModel
+$user = new User($options);
+$da = new UserDataAccess($link);
+$row = $da->convertModelToRow($user);
+// var_dump($row);
+
+
+// TEST convertModelToRow
+// $role = new Role($options);
+// $row = $da->ConvertModelToRow($role);
+// var_dump($row);
+
+die();
 // You'll have to run all these tests for each of your data access classes
 testConstructor();
 testConvertModelToRow();
