@@ -80,7 +80,7 @@ class UserDataAccess extends DataAccess{
 		salt			user_salt
 		active			user_active 
 		*/
-		$role = new Role();
+		$role = new User();
 		$role->id = $row['user_id'];
 		$role->firstName = $row['user_first_name'];
 		$role->lastName = $row['user_last_name'];
@@ -103,7 +103,26 @@ class UserDataAccess extends DataAccess{
 	* @return {array}		Returns an array of model objects
 	*/
 	function getAll($args = null){
-		return []; // comment this out when you implement the code for this method
+		$qStr = "SELECT
+						user_id,
+						user_first_name,
+						user_last_name,
+						user_email,
+						user_role,
+						user_password,
+						user_salt,
+						user_active
+				FROM users";
+
+		$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
+
+		$allRoles = [];
+
+		while($row = mysqli_fetch_assoc($result)){
+		$allRoles[] = $this->convertRowToModel($row);
+		}
+
+		return $allRoles;//code for this method
 	}
 
 
@@ -113,7 +132,40 @@ class UserDataAccess extends DataAccess{
 	* @return {User}		Returns an instance of a model object 
 	*/
 	function getById($id){
-		return new User(); // comment this out when you implement the code for this method
+		// return new User(); // comment this out when you implement the code for this method
+		$qStr = "SELECT
+                  user_id,
+                  user_first_name,
+                  user_last_name,
+				  user_email,
+				  user_role,
+				  user_password,
+				  user_salt,
+				  user_active
+
+              FROM users
+              WHERE user_id =" . mysqli_real_escape_string($this->link, $id);
+  
+
+			// id				user_id
+			// firstName		user_first_name
+			// lastName			user_last_name
+			// email			user_email
+			// roleId			user_role
+			// password			user_password
+			// salt				user_salt
+			// active			user_active
+		$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
+	
+		if($result->num_rows == 1){
+			$row = mysqli_fetch_assoc($result);
+			//var_dump($row);die();
+			$role = $this->convertRowToModel($row);
+			return $role;
+		}
+	
+		return false;
+	
 	}
 
 	
@@ -123,7 +175,47 @@ class UserDataAccess extends DataAccess{
 	 * @return {User}		Returns a User including the newly assignd user id			
 	 */
 	function insert($user){
-		return new User(); // comment this out when you implement the code for this method
+		// return new User(); // comment this out when you implement the code for this method
+		$row = $this->convertModelToRow($user);
+  
+		$qStr = "INSERT INTO users (
+					user_first_name,
+					user_last_name,
+					user_email,
+					user_role,
+					user_password,
+					user_salt,
+					user_active
+				) VALUES (
+					'{$row['user_first_name']}',
+					'{$row['user_last_name']}',
+					'{$row['user_email']}',
+					'{$row['user_role']}',
+					'{$row['user_password']}',
+					'{$row['user_salt']}',
+					'{$row['user_active']}'
+				)";
+
+			// id				user_id
+			// firstName		user_first_name
+			// lastName			user_last_name
+			// email			user_email
+			// roleId			user_role
+			// password			user_password
+			// salt				user_salt
+			// active			user_active
+
+		//die($qStr);
+		$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
+	
+		if($result){
+			$user->id = mysqli_insert_id($this->link);
+			return $user;
+		}else{
+			$this->handleError("unable to insert user");
+		}
+	
+		return false;
 	}
 
 	/**
@@ -132,7 +224,34 @@ class UserDataAccess extends DataAccess{
 	 * @return {boolean}				Returns true if the update succeeds			
 	 */
 	function update($user){
-        return false; // comment this out when you implement the code for this method
+        // return false; // comment this out when you implement the code for this method
+		$row = $this->convertModelToRow($user);
+  
+		$qStr = "UPDATE users SET
+					user_first_name = '{$row['user_first_name']}',
+					user_last_name ='{$row['user_last_name']}',
+					user_email = '{$row['user_email']}',
+					user_role = '{$row['user_role']}',
+					user_password = '{$row['user_password']}',
+					WHERE user_id = " . $row['user_id'];
+		//die($qStr);
+		// id				user_id
+			// firstName		user_first_name
+			// lastName			user_last_name
+			// email			user_email
+			// roleId			user_role
+			// password			user_password
+			// salt				user_salt
+			// active			user_active
+	
+		$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
+		//var_dump($result); die();
+		if($result){
+			return true;
+		}else{
+			$this->handleError("Unable to update user");
+		}
+		return false;
 	}
 
 

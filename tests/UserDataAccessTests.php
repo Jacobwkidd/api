@@ -20,11 +20,26 @@ $options = array(
 	'salt' => "xxx"
 );
 
-//TEST convertRowToModel
+//TEST convertRowToModel();
 $user = new User($options);
 $da = new UserDataAccess($link);
 $row = $da->convertModelToRow($user);
-// var_dump($row);
+var_dump($row);
+
+//TEST convertModelToRow();
+$user = new User($options);
+$row = $da->ConvertModelToRow($user);
+var_dump($row);
+
+//TEST getAll();
+$roleModels = $da->getAll();
+var_dump($roleModels);
+
+//TEST getById();
+// $user
+
+
+
 
 
 // TEST convertModelToRow
@@ -32,7 +47,7 @@ $row = $da->convertModelToRow($user);
 // $row = $da->ConvertModelToRow($role);
 // var_dump($row);
 
-die();
+// die();
 // You'll have to run all these tests for each of your data access classes
 testConstructor();
 testConvertModelToRow();
