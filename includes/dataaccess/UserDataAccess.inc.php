@@ -46,7 +46,7 @@ class UserDataAccess extends DataAccess{
 	function convertModelToRow($user){
 		$row = [];
 
-		$row["user_role_id"] = $user->id;
+		$row["user_id"] = $user->id;
 		$row["user_first_name"] = $user->firstName;
 		$row["user_last_name"] = $user->lastName;
 		$row["user_email"] = $user->email;
@@ -195,6 +195,7 @@ class UserDataAccess extends DataAccess{
 					'{$row['user_salt']}',
 					'{$row['user_active']}'
 				)";
+				// die($qStr);
 
 			// id				user_id
 			// firstName		user_first_name
@@ -232,7 +233,7 @@ class UserDataAccess extends DataAccess{
 					user_last_name ='{$row['user_last_name']}',
 					user_email = '{$row['user_email']}',
 					user_role = '{$row['user_role']}',
-					user_password = '{$row['user_password']}',
+					user_password = '{$row['user_password']}'
 					WHERE user_id = " . $row['user_id'];
 		//die($qStr);
 		// id				user_id
@@ -243,7 +244,7 @@ class UserDataAccess extends DataAccess{
 			// password			user_password
 			// salt				user_salt
 			// active			user_active
-	
+		// die($qStr);	
 		$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
 		//var_dump($result); die();
 		if($result){

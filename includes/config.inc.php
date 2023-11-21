@@ -11,7 +11,7 @@ if($_SERVER['SERVER_NAME'] == "localhost"){
 	define("DEBUG_MODE", true); 
 	define("DB_HOST", "localhost");
 	define("DB_USER", "root");
-	define("DB_PASSWORD", "");
+	define("DB_PASSWORD", "test");
 	define("DB_NAME", "api_dev_db");
 	define("SITE_ADMIN_EMAIL", "PUT EMAIL ADDRESS HERE");
 	define("SITE_DOMAIN", $_SERVER['SERVER_NAME']);

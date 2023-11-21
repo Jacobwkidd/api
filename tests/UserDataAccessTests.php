@@ -36,7 +36,28 @@ $roleModels = $da->getAll();
 var_dump($roleModels);
 
 //TEST getById();
-// $user
+$user1 = $da->getById(1);
+var_dump($user1);
+
+$options = array(
+	'id' => 1,
+	'firstName' => "Bob",
+	'lastName' => "Smith",
+	'email' => "bobs@smith.com",
+	'roleId' => 1,
+	'password' => "opensesame",
+	'active' => true,
+	'salt' => "xxx"
+);
+
+//TEST insert();
+$user2 = new User($options);
+// $newUser = $da->insert($user2);
+// var_dump($newUser);
+
+//TEST update();
+$user->email = "Silly@smith.com";
+var_dump($da->update($user));
 
 
 
@@ -47,6 +68,11 @@ var_dump($roleModels);
 // $row = $da->ConvertModelToRow($role);
 // var_dump($row);
 
+
+
+
+
+// you have to take this out and it for the next assignment.
 // die();
 // You'll have to run all these tests for each of your data access classes
 testConstructor();

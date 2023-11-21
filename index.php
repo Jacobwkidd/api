@@ -42,6 +42,9 @@ if($route){
 }
 /*
 if($route){
+	include_once("includes/controllers/$className.inc.php");
+	$controller = new $className(get_link());
+	call_user_func(array($controller, $methodName));
 	echo("Instantiate this controller: <b>{$route['controller']}</b> and invoke this method: <b>{$route['action']}</b>");
 }else{
 	header("HTTP/1.1 404 Not Found");
