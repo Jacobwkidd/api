@@ -1,21 +1,53 @@
 <?php
-include_once("../includes/models/Tenant.inc.php");
+include_once("../includes/models/Landlord.inc.php");
 
 
-// we'll use these options to create valid Tenant in our tests
+// we'll use these options to create valid Landlord in our tests
 $options = array(
 	'id' => 1,
 	'firstName' => "Bob",
 	'lastName' => "Smith",
 	'email' => "bob@smith.com",
-	'password' => "opensesame",
+	'password' => "opensesame"
 );
+
+//TEST ConvertRowToModel();
+$landlord = new LandLord($options);
+$da = new LandLordDataAccess($link);
+$row = $da->convertRowToModel($landlord);
+var_dump($row);
+
+//TEST convertModelToRow();
+$landlord = new LandLord($options);
+$row = $da->convertModelToRow($landlord);
+var_dump($row);
+
+//TEST getAll();
+$roleModels = $da->getAll();
+var_dump($roleModels);
+
+$options1 = array(
+	'id' => 1,
+	'firstName' => "Bob",
+	'lastName' => "Smith",
+	'email' => "bobs@smith.com",
+	'password' => "opensesame"
+);
+
+//TEST insert();
+$landlord2 = new LandLord($options1);
+$newLandLord = $da->insert($landlord2);
+var_dump($newLandLord);
+
+//TEST update();
+$landlord->email = "Silly@smith.com";
+var_dump($da->update($landlord));
 
 
 /*
 // I put this code here to test that the inherited, protected members (validationErrs)
 // does not appear in the JSON
-$u = new Tenant($options);
+$u = new Landlord($options);
 $u->firstName = "";
 $u->isValid();
 echo(json_encode($u));
@@ -37,17 +69,17 @@ function testConstructor(){
 	global $testResults, $options;
 	$testResults[] = "<b>Testing the constructor...</b>";
 
-	// TEST - Make sure we can create a Tenant object
-	$u = new Tenant();
+	// TEST - Make sure we can create a Landlord object
+	$u = new Landlord();
 	
 	if($u){
-		$testResults[] = "PASS - Created instance of Tenant model object";
+		$testResults[] = "PASS - Created instance of Landlord model object";
 	}else{
-		$testResults[] = "FAIL - DID NOT creat instance of a Tenant model object";
+		$testResults[] = "FAIL - DID NOT creat instance of a Landlord model object";
 	}
 
 	// TEST - Make sure the firstName property gets set correctly
-	$u = new Tenant($options);
+	$u = new Landlord($options);
 
 	if($u->id === 1){
 		$testResults[] = "PASS - Set id properly";
@@ -87,7 +119,7 @@ function testIsValid(){
 	$testResults[] = "<b>Testing isValid()...</b>";
 		
 	// isValid() should return false when the ID is not numeric
-	$u = new Tenant($options);
+	$u = new Landlord($options);
 	$u->id = "";
 
 	if($u->isValid() === false){
@@ -113,7 +145,7 @@ function testIsValid(){
 	}
 	
 	// isValid() should return false when the firstName is empty
-	$u = new Tenant($options);
+	$u = new Landlord($options);
 	$u->firstName = "";
 	if($u->isValid() === false){
 		$testResults[] = "PASS - isValid() returns false when firstName is empty";
@@ -130,7 +162,7 @@ function testIsValid(){
 	}
 
 	// When the firstName is longer than 30 characters, isValid() should return false
-	$u = new Tenant($options);
+	$u = new Landlord($options);
 	$u->firstName = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 	if($u->isValid() === false){
 		$testResults[] = "PASS - isValid() returns false when firstName is too long";
@@ -147,7 +179,7 @@ function testIsValid(){
 	}
 
 	// isValid() should return false when the lastName is empty
-	$u = new Tenant($options);
+	$u = new Landlord($options);
 	$u->lastName = "";
 	if($u->isValid() === false){
 		$testResults[] = "PASS - isValid() returns false when lastName is empty";
@@ -164,7 +196,7 @@ function testIsValid(){
 	}
 
 	// When the lastName is longer than 30 characters, isValid() should return false
-	$u = new Tenant($options);
+	$u = new Landlord($options);
 	$u->lastName = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 	if($u->isValid() === false){
 		$testResults[] = "PASS - isValid() returns false when lastName is too long";
@@ -181,7 +213,7 @@ function testIsValid(){
 	}
 
 	// isValid() should return false when the email is empty
-	$u = new Tenant($options);
+	$u = new Landlord($options);
 	$u->email = "";
 	if($u->isValid() === false){
 		$testResults[] = "PASS - isValid() returns false when email is empty";
@@ -199,7 +231,7 @@ function testIsValid(){
 
 
 	// isValid() should return false when the email is not a valid email address
-	$u = new Tenant($options);
+	$u = new Landlord($options);
 	$u->email = "x";
 	if($u->isValid() === false){
 		$testResults[] = "PASS - isValid() returns false when email is not a valid email address";
@@ -216,7 +248,7 @@ function testIsValid(){
 	}
 
 	// When the email is longer than 100 characters, isValid() should return false
-	$u = new Tenant($options);
+	$u = new Landlord($options);
 	$u->email = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.com";
 	if($u->isValid() === false){
 		$testResults[] = "PASS - isValid() returns false when email is too long";
@@ -233,15 +265,15 @@ function testIsValid(){
 	}
 
 	
-	// isValid() should return false if the Tenant id is 0 AND the password is empty
-	$u = new Tenant($options);
+	// isValid() should return false if the Landlord id is 0 AND the password is empty
+	$u = new Landlord($options);
 	$u->id = 0;
 	$u->password = "";
 
 	if($u->isValid() === false){
-		$testResults[] = "PASS - isValid() returns false when the Tenant id is 0 AND the password is empty";
+		$testResults[] = "PASS - isValid() returns false when the Landlord id is 0 AND the password is empty";
 	}else{
-		$testResults[] = "FAIL - isValid() DOES NOT return false when the Tenant id is 0 AND the password is empty";
+		$testResults[] = "FAIL - isValid() DOES NOT return false when the Landlord id is 0 AND the password is empty";
 	}
 
 	// When the password is not valid, the error message should be 'The role is not valid'
@@ -253,21 +285,21 @@ function testIsValid(){
 	}
 
 
-	// When the Tenant is valid, isValid() should return true
-	$u = new Tenant($options);
+	// When the Landlord is valid, isValid() should return true
+	$u = new Landlord($options);
 
 	if($u->isValid() === true){
-		$testResults[] = "PASS - isValid() returns true when the Tenant is valid";
+		$testResults[] = "PASS - isValid() returns true when the Landlord is valid";
 	}else{
-		$testResults[] = "FAIL - isValid() DOES NOT return true when the Tenant is valid";
+		$testResults[] = "FAIL - isValid() DOES NOT return true when the Landlord is valid";
 	}
 
-	// When the Tenant is valid, the validation errors should be an empty array
+	// When the Landlord is valid, the validation errors should be an empty array
 	$errors = $u->getValidationErrors();
 	if(empty($errors)){
-		$testResults[] = "PASS - There are no error messages when the Tenant is valid";
+		$testResults[] = "PASS - There are no error messages when the Landlord is valid";
 	}else{
-		$testResults[] = "FAIL - There ARE error messages when the Tenant is valid";
+		$testResults[] = "FAIL - There ARE error messages when the Landlord is valid";
 	}
 
 }

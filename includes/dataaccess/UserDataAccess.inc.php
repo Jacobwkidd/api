@@ -119,7 +119,7 @@ class UserDataAccess extends DataAccess{
 		$allRoles = [];
 
 		while($row = mysqli_fetch_assoc($result)){
-		$allRoles[] = $this->convertRowToModel($row);
+			$allRoles[] = $this->convertRowToModel($row);
 		}
 
 		return $allRoles;//code for this method
