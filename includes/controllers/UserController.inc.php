@@ -121,7 +121,15 @@ class UserController extends Controller{
                 }
                 break;
             case "DELETE":
-                echo("TODO: DELETE USER $id");
+                // echo("TODO: DELETE USER $id");
+                if($user = $da->getById($id)){
+                    $user->active = false;
+                    $da->update($user);
+                    $this->sendStatusHeader(200);
+                }
+                else{
+                    $this->sendStatusHeader(400, "Unable to 'delete' user $id");
+                }
                 break;
             case "OPTIONS":
                 // AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE
@@ -133,5 +141,7 @@ class UserController extends Controller{
                 $this->sendStatusHeader(400);
         }
     }
+
+   
 
 }

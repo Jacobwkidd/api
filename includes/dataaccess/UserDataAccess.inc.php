@@ -177,6 +177,10 @@ class UserDataAccess extends DataAccess{
 	function insert($user){
 		// return new User(); // comment this out when you implement the code for this method
 		$row = $this->convertModelToRow($user);
+
+		// salt and hash the password
+		$row['user_salt'] = $this->getRandomSalt();
+		$row['user_password'] = $this->saltAndHashPassword($row['user_salt'], $row['user_password']);
   
 		$qStr = "INSERT INTO users (
 					user_first_name,
@@ -225,33 +229,49 @@ class UserDataAccess extends DataAccess{
 	 * @return {boolean}				Returns true if the update succeeds			
 	 */
 	function update($user){
-        // return false; // comment this out when you implement the code for this method
+
 		$row = $this->convertModelToRow($user);
-  
-		$qStr = "UPDATE users SET
+	
+		$qStr;
+	
+		if(!empty($user->password)){
+			// If the password is NOT empty, then we'll salt and hash it
+			$salt = $this->getRandomSalt();
+			$hashedPassword = $this->saltAndHashPassword($salt, $row['user_password']);
+	
+			$qStr = "UPDATE users SET
 					user_first_name = '{$row['user_first_name']}',
-					user_last_name ='{$row['user_last_name']}',
+					user_last_name = '{$row['user_last_name']}',
 					user_email = '{$row['user_email']}',
 					user_role = '{$row['user_role']}',
-					user_password = '{$row['user_password']}'
-					WHERE user_id = " . $row['user_id'];
+					user_password = '$hashedPassword',
+					user_salt = '$salt',
+					user_active = '{$row['user_active']}'
+				WHERE user_id = " . $row['user_id'];
+		}else{
+			// If the password is emtpy we just won't include the password
+			// and the salt in the update query, which will leave them as they are in the database
+			$qStr = "UPDATE users SET
+					user_first_name = '{$row['user_first_name']}',
+					user_last_name = '{$row['user_last_name']}',
+					user_email = '{$row['user_email']}',
+					user_role = '{$row['user_role']}',
+					user_active = '{$row['user_active']}'
+				WHERE user_id = " . $row['user_id'];
+		}
+	
 		//die($qStr);
-		// id				user_id
-			// firstName		user_first_name
-			// lastName			user_last_name
-			// email			user_email
-			// roleId			user_role
-			// password			user_password
-			// salt				user_salt
-			// active			user_active
-		// die($qStr);	
+	
 		$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
-		//var_dump($result); die();
+	
+		// Remember we discovered a bug, that when you run an update
+		// statement for a user that doesn't exist, the $result will be true
 		if($result){
 			return true;
 		}else{
-			$this->handleError("Unable to update user");
+			$this->handleError("unable to update user");
 		}
+	
 		return false;
 	}
 
@@ -267,5 +287,91 @@ class UserDataAccess extends DataAccess{
 
 	
 	// Note - we'll add methods for authenticating users and handling passwords
+	/**
+ * Generates a random 'salt' string
+ * @return {string} 	A random string
+ */
+	function getRandomSalt(){
+		$bytes = random_bytes(5);
+		return bin2hex($bytes);
+	}
+
+	/**
+	 * Applies salt to a password (before hasing)
+	 * @param {string} $salt 		A random salt string
+	 * @param {string} $password 	The password to be salted
+	 * @return {string}				The salted password
+	 */
+	function saltPassword($salt, $password){
+		return $salt . $password . $salt;
+	}
+
+
+	/**
+	 * Salts and hashes a password
+	 * @param {string} $salt 		The salt to use
+	 * @param {string} $password 	The password to salt and hash
+	 * @return {string} 			The salted, hashed, password
+	 */
+	function saltAndHashPassword($salt, $password){
+
+		$salted_password = $this->saltPassword($salt, $password);
+		$encrypted_password = password_hash($salted_password, PASSWORD_DEFAULT);
+
+		return $encrypted_password;
+
+	}
+
+	 /**
+    * Authenticates a user
+    * @param {string} $email
+    * @param {string} $password
+    * @return {User} 			Returns a User model object if authentication is successful
+    * 							Returns false otherwise
+    */
+    function login($email, $password){
+
+        //REMINDER: the user should be 'active' in order to login
+
+        // Prevent SQL injection
+        $email = mysqli_real_escape_string($this->link, $email);
+        $password = mysqli_real_escape_string($this->link, $password);
+
+        // Select all columns from the user table where user_email = $email AND user_active = "yes"
+        // Note that we aren't checking the password here, we'll do that next.
+        $qStr = "SELECT
+                    user_id,
+                    user_first_name,
+                    user_last_name,
+                    user_email,
+                    user_role,
+                    user_role_name,
+                    user_salt,
+                    user_password,
+                    user_active
+                FROM users U
+                INNER JOIN user_roles UR on U.user_role = UR.user_role_id
+                WHERE user_email = '{$email}' AND user_active=true";
+
+        //die($qStr);
+
+        $result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
+
+        if($result && $result->num_rows == 1){
+
+            $row = mysqli_fetch_assoc($result);
+
+            $salted_password = $this->saltPassword($row['user_salt'], $password);
+
+            // verify that the salted password matches the user's password in the database:
+            if(password_verify($salted_password, $row['user_password'])){
+                $user = $this->convertRowToModel($row);
+                // WE PROBABLY SHOULD REMOVE THE SALT PROPERTY FROM THE USER MODEL!!! NO NEED TO SHARE IT OUTSIDE OF THE DB!!!
+                return $user;
+            }
+        }
+
+        return false;
+    }
 
 }

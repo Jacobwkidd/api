@@ -49,6 +49,8 @@ $sql = "
 
 ";
 
+// to salt and hash the passwords
+$sql .= 'UPDATE users SET user_password = \'$2y$10$rUzsEqfrVyyIotlYxnRrlelrKMDakjPSTCRV51a0dxnPc0q8uv4h.\', user_salt=\'03603e88f8\';';
 
 mysqli_multi_query($link, $sql) or die(mysqli_error($link));
 

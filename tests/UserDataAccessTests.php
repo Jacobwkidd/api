@@ -59,9 +59,22 @@ $user2 = new User($options);
 $user->email = "Silly@smith.com";
 var_dump($da->update($user));
 
+$str1 = $da->getRandomSalt();
+var_dump($str1);
 
+echo("<br>");
 
+$str2 = $da->getRandomSalt();
+var_dump($str2);
 
+$password = "test";
+$saltedPassword = $da->saltPassword($str2, $password);
+echo("<br>");
+echo($saltedPassword);
+echo("<br>");
+
+$hashPassword = $da->saltAndHashPassword($str2, $password);
+echo("<br>$hashPassword<br>");
 
 // TEST convertModelToRow
 // $role = new Role($options);
@@ -69,7 +82,8 @@ var_dump($da->update($user));
 // var_dump($row);
 
 
-
+$user = $da->login("bob@smith.com", "test");
+var_dump($user);
 
 
 // you have to take this out and it for the next assignment.
@@ -359,6 +373,34 @@ function testDelete(){
 	// Note sure how we want to handle this
 	// If you allow deletes then it can get messy with FK relationships
 	// It might be better to set active = no
+}
+
+function testLogin(){
+    global $testResults, $link;
+    $testResults[] = "<b>TESTING login()...</b>";
+    $da = new UserDataAccess($link);
+
+    // Valid login test
+    $email = "jane@doe.com";
+    $password = "test";
+    $user = $da->login($email, $password);
+    //var_dump($user);
+	  if($user !== false){
+		  $testResults[] = "PASS - login() authenticated $email";
+	  }else{
+		  $testResults[] = "FAIL - login() DID NOT authenticate $email";
+	  }
+
+	  // INvalid login test
+    $email = "jane@doe.comxxxxxxxxxxxxxxxxxxxxxxxx";
+    $password = "test";
+    $user = $da->login($email, $password);
+    //var_dump($user);
+	  if($user === false){
+		  $testResults[] = "PASS - login() DID NOT authenticated $email";
+	  }else{
+		  $testResults[] = "FAIL - login() authenticate $email";
+	  }
 }
 
 
