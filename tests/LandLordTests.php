@@ -1,6 +1,7 @@
 <?php
 include_once("../includes/models/Landlord.inc.php");
-
+include_once("../includes/dataaccess/LandLordDataAccess.inc.php");
+include_once("create-test-database.php");
 
 // we'll use these options to create valid Landlord in our tests
 $options = array(
@@ -12,11 +13,16 @@ $options = array(
 );
 
 //TEST ConvertRowToModel();
-$landlord = new LandLord($options);
+$row = [];
+$row['landlord_user_id'] = 1;
+$row['landlord_user_first_name'] = "Jacob";
+$row['landlord_user_last_name'] = "Pip";
+$row['landlord_user_email'] = "jacobpip@pipprop.com";
+$row['landlord_user_password'] = "123";
 $da = new LandLordDataAccess($link);
-$row = $da->convertRowToModel($landlord);
-var_dump($row);
-
+$landlordModelObject = $da->convertRowToModel($row);
+var_dump($landlordModelObject);
+die();
 //TEST convertModelToRow();
 $landlord = new LandLord($options);
 $row = $da->convertModelToRow($landlord);

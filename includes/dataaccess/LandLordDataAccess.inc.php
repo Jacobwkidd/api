@@ -11,7 +11,7 @@ NOTE - The database column names do not map directly to the property names of th
 */
 
 include_once("DataAccess.inc.php");
-include_once(__DIR__ . "/../models/LandLord.inc.php"); 
+include_once(__DIR__ . "/../models/Landlord.inc.php"); 
 
 
 class LandLordDataAccess extends DataAccess{
