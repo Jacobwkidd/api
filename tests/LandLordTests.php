@@ -1,16 +1,9 @@
 <?php
 include_once("../includes/models/Landlord.inc.php");
 include_once("../includes/dataaccess/LandLordDataAccess.inc.php");
-include_once("create-test-database.php");
+include_once("create-test-database-fp.php");
 
 // we'll use these options to create valid Landlord in our tests
-$options = array(
-	'id' => 1,
-	'firstName' => "Bob",
-	'lastName' => "Smith",
-	'email' => "bob@smith.com",
-	'password' => "opensesame"
-);
 
 //TEST ConvertRowToModel();
 $row = [];
@@ -22,23 +15,27 @@ $row['landlord_user_password'] = "123";
 $da = new LandLordDataAccess($link);
 $landlordModelObject = $da->convertRowToModel($row);
 var_dump($landlordModelObject);
-die();
+
 //TEST convertModelToRow();
-$landlord = new LandLord($options);
-$row = $da->convertModelToRow($landlord);
+// $landlord = new LandLord($row);
+$row = $da->convertModelToRow($landlordModelObject);
 var_dump($row);
 
 //TEST getAll();
-$roleModels = $da->getAll();
-var_dump($roleModels);
+$landlordModels = $da->getAll();
+var_dump($landlordModels);
 
 $options1 = array(
-	'id' => 1,
-	'firstName' => "Bob",
-	'lastName' => "Smith",
-	'email' => "bobs@smith.com",
-	'password' => "opensesame"
+	'landlord_user_id' => 6,
+	'landlord_user_first_name' => "Bob",
+	'landlord_user_last_name' => "Smith",
+	'landlord_user_email' => "bobs@smith.com",
+	'landlord_user_password' => "opensesame"
 );
+
+// TEST getById
+$landlordId = $da->getById(1);
+var_dump($landlordId);
 
 //TEST insert();
 $landlord2 = new LandLord($options1);
@@ -46,7 +43,7 @@ $newLandLord = $da->insert($landlord2);
 var_dump($newLandLord);
 
 //TEST update();
-$landlord->email = "Silly@smith.com";
+$landlord->landlord_user_email = "Silly@smith.com";
 var_dump($da->update($landlord));
 
 

@@ -1,6 +1,7 @@
 <?php
-include_once("../includes/models/Landlord.inc.php");
-
+include_once("../includes/models/Tenant.inc.php");
+include_once("../includes/dataaccess/TenantDataAccess.inc.php");
+include_once("create-test-database-fp.php");
 
 // we'll use these options to create valid Landlord in our tests
 $options = array(

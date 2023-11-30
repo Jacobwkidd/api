@@ -128,7 +128,7 @@ class LandLordDataAccess extends DataAccess{
     * @return {Role}		Returns the same model object, but with the id property set 
     *						(the id is assigned by the database)
     */
-    function insert($role){
+    function insert($landlord){
 
       $row = $this->convertModelToRow($landlord);
   
@@ -163,7 +163,7 @@ class LandLordDataAccess extends DataAccess{
     * @param {Role}	$role	The model object to be updated
     * @return {boolean}		Returns true if the updated succeeded, false otherwise
     */
-    function update($role){
+    function update($landlord){
 
       $row = $this->convertModelToRow($landlord);
   

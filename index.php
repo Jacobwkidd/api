@@ -1,4 +1,7 @@
 <?php
+
+// phpinfo();
+// die();
 // We need to discuss URL rewriting before we do this
 
 include_once("includes/config.inc.php");

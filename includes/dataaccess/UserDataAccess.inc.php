@@ -82,13 +82,13 @@ class UserDataAccess extends DataAccess{
 		*/
 		$role = new User();
 		$role->id = $row['user_id'];
-		$role->firstName = $row['user_first_name'];
-		$role->lastName = $row['user_last_name'];
-		$role->email = $row['user_email'];
+		$role->firstName = htmlentities($row['user_first_name']);
+		$role->lastName = htmlentities($row['user_last_name']);
+		$role->email = htmlentities($row['user_email']);
 		$role->roleId = $row['user_role'];
-		$role->password = $row['user_password'];
-		$role->salt = $row['user_salt'];
-		$role->active = $row['user_active'];
+		$role->password = "";
+		$role->salt = "";
+		$role->active = $row['user_active'] > 0 ? true : false;
   
       	return $role;
 
