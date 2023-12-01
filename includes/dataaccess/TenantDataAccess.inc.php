@@ -128,18 +128,16 @@ class TenantDataAccess extends DataAccess{
     * @return {Role}		Returns the same model object, but with the id property set 
     *						(the id is assigned by the database)
     */
-    function insert($role){
+    function insert($tenant){
 
       $row = $this->convertModelToRow($tenant);
   
       $qStr = "INSERT INTO tenant (
-                  tenant_user_id,
                   tenant_user_first_name,
                   tenant_user_last_name,
                   tenant_user_email,
                   tenant_user_password
               ) VALUES (
-                  '{$row['tenant_user_id']}',
                   '{$row['tenant_user_first_name']}',
                   '{$row['tenant_user_last_name']}',
                   '{$row['tenant_user_email']}',
@@ -163,7 +161,7 @@ class TenantDataAccess extends DataAccess{
     * @param {Role}	$role	The model object to be updated
     * @return {boolean}		Returns true if the updated succeeded, false otherwise
     */
-    function update($role){
+    function update($tenant){
 
       $row = $this->convertModelToRow($tenant);
   

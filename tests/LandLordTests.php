@@ -25,26 +25,40 @@ var_dump($row);
 $landlordModels = $da->getAll();
 var_dump($landlordModels);
 
+// $options1 = array(
+// 	'landlord_user_id' => 6,
+// 	'landlord_user_first_name' => "Bob",
+// 	'landlord_user_last_name' => "Smith",
+// 	'landlord_user_email' => "bobss@smith.com",
+// 	'landlord_user_password' => "opensesame"
+// );
 $options1 = array(
-	'landlord_user_id' => 6,
-	'landlord_user_first_name' => "Bob",
-	'landlord_user_last_name' => "Smith",
-	'landlord_user_email' => "bobs@smith.com",
-	'landlord_user_password' => "opensesame"
+	'id' => 6,
+	'firstName' => "Bob",
+	'lastName' => "Smith",
+	'email' => "bobss@smith.com",
+	'password' => "opensesame"
 );
+$options2 = array(
+	'firstName' => "Bob",
+	'lastName' => "Smith",
+	'email' => "bobsss@smith.com",
+	'password' => "opensesame"
+);
+
 
 // TEST getById
 $landlordId = $da->getById(1);
 var_dump($landlordId);
 
 //TEST insert();
-$landlord2 = new LandLord($options1);
-$newLandLord = $da->insert($landlord2);
-var_dump($newLandLord);
+$landlord2 = new LandLord($options2);
+// $newLandLord = $da->insert($landlord2);
+// var_dump($newLandLord);
 
 //TEST update();
-$landlord->landlord_user_email = "Silly@smith.com";
-var_dump($da->update($landlord));
+$landlord2->email = "Silly@smith.com";
+var_dump($da->update($landlord2));
 
 
 /*
@@ -54,9 +68,9 @@ $u = new Landlord($options);
 $u->firstName = "";
 $u->isValid();
 echo(json_encode($u));
-die();
-*/
 
+*/
+die();
 // This array will store the test results
 $testResults = array();
 

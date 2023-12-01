@@ -4,45 +4,57 @@ include_once("../includes/dataaccess/TenantDataAccess.inc.php");
 include_once("create-test-database-fp.php");
 
 // we'll use these options to create valid Landlord in our tests
-$options = array(
-	'id' => 1,
-	'firstName' => "Bob",
-	'lastName' => "Smith",
-	'email' => "bob@smith.com",
-	'password' => "opensesame"
-);
+// $options = array(
+// 	'id' => 1,
+// 	'firstName' => "Bob",
+// 	'lastName' => "Smith",
+// 	'email' => "bob@smith.com",
+// 	'password' => "opensesame"
+// );
+$row = [];
+$row['tenant_user_id'] = 1;
+$row['tenant_user_first_name'] = "Jacob";
+$row['tenant_user_last_name'] = "Pip";
+$row['tenant_user_email'] = "jacobpip@pipprop.com";
+$row['tenant_user_password'] = "123";
+$da = new TenantDataAccess($link);
+$tenantModelObject = $da->convertRowToModel($row);
+var_dump($tenantModelObject);
 
 //TEST ConvertRowToModel();
-$Tenant = new Tenant($options);
-$da = new TenantDataAccess($link);
-$row = $da->convertRowToModel($Tenant);
-var_dump($row);
+// $Tenant = new Tenant($options);
+// $da = new TenantDataAccess($link);
+// $row = $da->convertRowToModel($tenantModelObject);
+// var_dump($row);
 
 //TEST convertModelToRow();
-$Tenant = new Tenant($options);
-$row = $da->convertModelToRow($Tenant);
+// $Tenant = new Tenant($tenantModelObject);
+$row = $da->convertModelToRow($tenantModelObject);
 var_dump($row);
 
 //TEST getAll();
-$roleModels = $da->getAll();
-var_dump($roleModels);
+$tenantModel = $da->getAll();
+var_dump($tenantModel);
 
 $options1 = array(
-	'id' => 1,
 	'firstName' => "Bob",
 	'lastName' => "Smith",
-	'email' => "bobs@smith.com",
+	'email' => "bobsss@smith.com",
 	'password' => "opensesame"
 );
 
+$tenantId = $da->getById(1);
+var_dump($tenantId);
+
+
 //TEST insert();
 $Tenant2 = new Tenant($options1);
-$newTenant = $da->insert($Tenant2);
-var_dump($newTenant);
+// $newTenant = $da->insert($Tenant2);
+// var_dump($newTenant);
 
 //TEST update();
-$Tenant->email = "Silly@smith.com";
-var_dump($da->update($Tenant));
+$tenantId->email = "Silly@smith.com";
+var_dump($da->update($tenantId));
 
 
 /*
@@ -52,9 +64,9 @@ $u = new Tenant($options);
 $u->firstName = "";
 $u->isValid();
 echo(json_encode($u));
-die();
-*/
 
+*/
+die();
 // This array will store the test results
 $testResults = array();
 

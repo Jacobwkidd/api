@@ -133,19 +133,17 @@ class LandLordDataAccess extends DataAccess{
       $row = $this->convertModelToRow($landlord);
   
       $qStr = "INSERT INTO landlord (
-                  landlord_user_id,
                   landlord_user_first_name,
                   landlord_user_last_name,
                   landlord_user_email,
                   landlord_user_password
               ) VALUES (
-                  '{$row['landlord_user_id']}',
                   '{$row['landlord_user_first_name']}',
                   '{$row['landlord_user_last_name']}',
                   '{$row['landlord_user_email']}',
                   '{$row['landlord_user_password']}'
               )";
-      //die($qStr);
+//      die($qStr);
       $result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
   
       if($result){
