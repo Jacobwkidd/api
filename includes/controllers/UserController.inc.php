@@ -16,6 +16,14 @@ class UserController extends Controller{
 
                 switch($_SERVER['REQUEST_METHOD']){
                     case "POST":
+
+
+                        if(SECURE_SERVER_RESOURCES){
+                            if(!$this->isAdmin()){
+                                $this->sendStatusHeader(401, "Only admins can insert new users");
+                                die();
+                            }
+                        }
                         // parse the JSON sent (in the request body) into an associative array
                     $data = $this->getJSONRequestBody();
                     //print_r($data);die();  // sanity check!
@@ -45,6 +53,13 @@ class UserController extends Controller{
 
                 break;
             case "GET":
+
+                if(SECURE_SERVER_RESOURCES){
+                    if(!$this->isAdmin()){
+                        $this->sendStatusHeader(401, "Only admins can get all users");
+                        die();
+                    }
+                }
                 //echo("GET ALL USERS");
                 $users = $da->getAll();
                 //print_r($users);die();
@@ -78,7 +93,7 @@ class UserController extends Controller{
         // We need to get the url being requested so that we can extract the user id
         $url_path = $this->getUrlPath();
         $url_path = $this->removeLastSlash($url_path);
-        echo($url_path); die();
+        //echo($url_path); die();
     
         // extract the user id by using a regular expression
         $id = null;
@@ -90,6 +105,12 @@ class UserController extends Controller{
     
         switch($_SERVER['REQUEST_METHOD']){
             case "GET": // getting a user
+                if(SECURE_SERVER_RESOURCES){
+                    if(!$this->isAdmin() && !$this->isOwner($id)){
+                        $this->sendStatusHeader(401, "Only admins or owners can get a user (a user can get his/her own info)");
+                        die();
+                    }
+                }
                 $user = $da->getById($id);
                 $json = json_encode($user);
                 $this->setContentType("json");
@@ -99,6 +120,15 @@ class UserController extends Controller{
                 break;
             case "PUT": //updating the users Id
 			    //echo("TODO: UPDATE USER $id");
+                if(SECURE_SERVER_RESOURCES){
+                    // note that admins can update any user
+                    // but standard users can only update their 'own' info
+                    if(!$this->isAdmin() && !$this->isOwner($id)){
+                        $this->sendStatusHeader(401, "Only admins or owners can put a user (a user can put his/her own info)");
+                        die();
+                    }
+                }
+                //ISSUE: Users should not be able to change their own role or active status!
                 $data = $this->getJSONRequestBody();
                 $user = new User($data);
                 
@@ -122,6 +152,12 @@ class UserController extends Controller{
                 break;
             case "DELETE":
                 // echo("TODO: DELETE USER $id");
+                if(SECURE_SERVER_RESOURCES){
+                    if(!$this->isAdmin()){
+                        $this->sendStatusHeader(401, "Only admins can delete a user");
+                        die();
+                    }
+                }
                 if($user = $da->getById($id)){
                     $user->active = false;
                     $da->update($user);

@@ -54,12 +54,12 @@ class TenantDataAccess extends DataAccess{
     */
     function convertRowToModel($row){
 
-        $tenant = new Tenant();
-        $tenant->id = $row['tenant_user_id'];
-        $tenant->firstName = $row['tenant_user_first_name'];
-        $tenant->lastName = $row['tenant_user_last_name'];
-        $tenant->email = $row['tenant_user_email'];   
-        $tenant->password = $row['tenant_user_password']; 
+      $tenant = new Tenant();
+      $tenant->id = $row['tenant_user_id'];
+      $tenant->firstName = $row['tenant_user_first_name'];
+      $tenant->lastName = $row['tenant_user_last_name'];
+      $tenant->email = $row['tenant_user_email'];   
+      $tenant->password = $row['tenant_user_password']; 
   
       return $tenant;
     }
@@ -112,10 +112,10 @@ class TenantDataAccess extends DataAccess{
       $result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
   
       if($result->num_rows == 1){
-          $row = mysqli_fetch_assoc($result);
-          //var_dump($row);die();
-          $tenant = $this->convertRowToModel($row);
-          return $tenant;
+        $row = mysqli_fetch_assoc($result);
+        //var_dump($row);die();
+        $tenant = $this->convertRowToModel($row);
+        return $tenant;
       }
   
       return false;

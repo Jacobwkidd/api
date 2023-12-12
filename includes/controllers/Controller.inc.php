@@ -108,5 +108,34 @@ class Controller {
 
 	    header($http[$statusCode] . " " . $msg, $replace);
 	}
+	// Checks to see if the user making the request is an admin
+	function isAdmin(){
+
+		$admin_role_id = 2; // the role id (in the user_roles table) for admins
+
+		if(isset($_SESSION['user_role_id']) && $_SESSION['user_role_id'] == $admin_role_id){
+			return true;
+		}
+
+		return false;
+	}
+
+	// Checks to see if the user making the request has authenticated
+	function isLoggedIn(){
+		if(isset($_SESSION['authenticated']) && $_SESSION['authenticated'] == "yes"){
+			return true;
+		}
+
+		return false;
+	}
+
+	// Checks to see if the $userId param matches the id of the user making the request
+	function isOwner($userId){
+		if(isset($_SESSION['user_id']) && $_SESSION['user_id'] == $userId){
+			return true;
+		}
+
+		return false;
+	}
 
 }

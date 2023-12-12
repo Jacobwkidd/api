@@ -1,18 +1,18 @@
 <?php
 include_once("Controller.inc.php");
-include_once(__DIR__ . "/../models/Landlord.inc.php");
-include_once(__DIR__ . "/../dataaccess/LandLordDataAccess.inc.php");
+include_once(__DIR__ . "/../models/Tenant.inc.php");
+include_once(__DIR__ . "/../dataaccess/TenantDataAccess.inc.php");
 
-class LandlordController extends Controller{
+class TenantController extends Controller{
 
 	function __construct($link){
 		parent::__construct($link);
 	}
 
     // action method for the /users route
-    public function handleUsers(){
+    public function handleTenant(){
 
-        $da = new LandLordDataAccess($this->link);
+        $da = new TenantDataAccess($this->link);
 
                 switch($_SERVER['REQUEST_METHOD']){
                     case "POST":
@@ -21,14 +21,14 @@ class LandlordController extends Controller{
                     //print_r($data);die();  // sanity check!
 
                     // pass the associative array into the LandLord contructor
-                    $LandLord = new LandLord($data);
-                    // var_dump($LandLord);die(); // another sanity check!
+                    $tenant = new Tenant($data);
+                    // var_dump($tenant);die(); // another sanity check!
 
-                    // make sure the LandLord is valid, if so TRY to insert
-                    if($LandLord->isValid()){
+                    // make sure the tenant is valid, if so TRY to insert
+                    if($tenant->isValid()){
                         try{
-                            $LandLord = $da->insert($LandLord);
-                            $json = json_encode($LandLord);
+                            $tenant = $da->insert($tenant);
+                            $json = json_encode($tenant);
                             $this->setContentType("json");
                             $this->sendStatusHeader(200);
                             echo($json);
@@ -38,19 +38,19 @@ class LandlordController extends Controller{
                             die();
                         }
                     }else{
-                        $msg = implode(',', array_values($LandLord->getValidationErrors()));
+                        $msg = implode(',', array_values($tenant->getValidationErrors()));
                         $this->sendStatusHeader(400, $msg);
                         die();
                     }
 
                 break;
             case "GET":
-                //echo("GET ALL LandLord");
-                $LandLord = $da->getAll();
-                //print_r($LandLord);die();
+                //echo("GET ALL tenant");
+                $tenant = $da->getAll();
+                //print_r($tenant);die();
 
-                // Convert the LandLord to json (and set the Content-Type header)
-                $json = json_encode($LandLord);
+                // Convert the tenant to json (and set the Content-Type header)
+                $json = json_encode($tenant);
 
                 // set the headers (before echoing anything into the response body)
                 $this->setContentType("json");
@@ -73,39 +73,39 @@ class LandlordController extends Controller{
     }
 
 
-    public function handleSingleLandLord(){
+    public function handleSingleTenant(){
 
-        // We need to get the url being requested so that we can extract the LandLord id
+        // We need to get the url being requested so that we can extract the tenant id
         $url_path = $this->getUrlPath();
         $url_path = $this->removeLastSlash($url_path);
         echo($url_path); die();
     
-        // extract the LandLord id by using a regular expression
+        // extract the tenant id by using a regular expression
         $id = null;
-        if(preg_match('/^LandLord\/([0-9]*\/?)$/', $url_path, $matches)){
+        if(preg_match('/^tenant\/([0-9]*\/?)$/', $url_path, $matches)){
             $id = $matches[1];
         }
     
-        $da = new LandLordDataAccess($this->link);
+        $da = new TenantDataAccess($this->link);
     
         switch($_SERVER['REQUEST_METHOD']){
             case "GET": // getting a LandLord
-                $LandLord = $da->getById($id);
-                $json = json_encode($LandLord);
+                $tenant = $da->getById($id);
+                $json = json_encode($tenant);
                 $this->setContentType("json");
                 $this->sendStatusHeader(200);
                 echo($json);
                 die();
                 break;
-            case "PUT": //updating the LandLord Id
-			    //echo("TODO: UPDATE LandLord $id");
+            case "PUT": //updating the tenant Id
+			    //echo("TODO: UPDATE tenant $id");
                 $data = $this->getJSONRequestBody();
-                $LandLord = new LandLord($data);
+                $tenant = new Tenant($data);
                 
-                if($LandLord->isValid()){
+                if($tenant->isValid()){
                     try{
-                        if($da->update($LandLord)){
-                            $json = json_encode($LandLord);
+                        if($da->update($tenant)){
+                            $json = json_encode($tenant);
                             $this->setContentType("json");
                             $this->sendStatusHeader(200);
                             echo($json);
@@ -115,20 +115,20 @@ class LandlordController extends Controller{
                     }
                     die();
                 }else{
-                    $msg = implode(',', array_values($LandLord->getValidationErrors()));
+                    $msg = implode(',', array_values($tenant->getValidationErrors()));
                     $this->sendStatusHeader(400, $msg);
                     die();
                 }
                 break;
             case "DELETE":
-                // echo("TODO: DELETE LandLord $id");
-                if($LandLord = $da->getById($id)){
-                    $LandLord->active = false;
-                    $da->update($LandLord);
+                // echo("TODO: DELETE tenant $id");
+                if($tenant = $da->getById($id)){
+                    $tenant->active = false;
+                    $da->update($tenant);
                     $this->sendStatusHeader(200);
                 }
                 else{
-                    $this->sendStatusHeader(400, "Unable to 'delete' LandLord $id");
+                    $this->sendStatusHeader(400, "Unable to 'delete' tenant $id");
                 }
                 break;
             case "OPTIONS":

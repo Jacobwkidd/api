@@ -109,7 +109,7 @@ class User extends Model{
 		// validate roleId
 		// roleId should be a 1 or a 2 (it should be a number, not a string)
 		// Side Note: 1 = Standard User and 2 = Admin 
-		if($this->roleId !== 1 || $this->roleId !== 2){
+		if($this->roleId !== 1 && $this->roleId !== 2){
 			$valid = false;
 			$this->validationErrors["roleId"] = 'The role is not valid';
 		}
@@ -137,7 +137,7 @@ class User extends Model{
 
 		// validate active, it must be either true or false
 		// SIDE NOTE: when a user is not active, they will not be able to log in
-		if($this->active !== true || $this->active !== false){
+		if($this->active !== true && $this->active !== false){
 			$valid = false;
 			$this->validationErrors["active"] = 'The active setting is not valid';
 		}

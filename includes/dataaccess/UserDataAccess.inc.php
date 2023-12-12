@@ -53,7 +53,7 @@ class UserDataAccess extends DataAccess{
 		$row["user_role"] = $user->roleId;
 		$row["user_password"] = $user->password;
 		$row["user_salt"] = $user->salt;
-		$row["user_active"] = $user->active;
+		$row["user_active"] = $user->active ? 1 : 0;
 
 		return $row;
 	
@@ -260,7 +260,7 @@ class UserDataAccess extends DataAccess{
 				WHERE user_id = " . $row['user_id'];
 		}
 	
-		//die($qStr);
+		die($qStr);
 	
 		$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
 	

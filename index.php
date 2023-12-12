@@ -24,7 +24,11 @@ $routes = [
 	"users/:id" => ["controller" => "UserController", "action" => "handleSingleUser"],
 	"roles/" => ["controller" => "RoleController", "action" => "handleRoles"],
 	"login/" =>	["controller" => "LoginController", "action" => "handleLogin"],
-	"logout/" => ["controller" => "LoginController", "action" => "handleLogout"]
+	"logout/" => ["controller" => "LoginController", "action" => "handleLogout"],
+	"landlord/" => ["controller" => "LandlordController", "action" => "handleLandlord"],
+	"landlord/:id" => ["controller" => "LandlordController", "action" => "handleSingleLandlord"],
+	"property/" => ["controller" => "PropertyController", "action" => "handleProperty"],
+	"property/:id" => ["controller" => "PropertyController", "action" => "handleSingleProperty"],
 ];
 
 $router = new Router($routes);

@@ -12,13 +12,13 @@ if($_SERVER['SERVER_NAME'] == "localhost"){
 	define("DB_HOST", "localhost");
 	define("DB_USER", "root");
 	define("DB_PASSWORD", "test");
-	define("DB_NAME", "api_dev_db");
+	define("DB_NAME", "draft100");
 	define("SITE_ADMIN_EMAIL", "PUT EMAIL ADDRESS HERE");
 	define("SITE_DOMAIN", $_SERVER['SERVER_NAME']);
 	define("REQUIRE_HTTPS", false);
 
 	// On the dev environment, we may want to disable securing the server resources
-	define("SECURE_SERVER_RESOURCES", false);
+	define("SECURE_SERVER_RESOURCES", true);
 
 	/* TODO: uncomment this code when we start dealing with CORS requests
 	// On the dev environment we will be making CORS requests 
